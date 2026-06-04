@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Events — TICKETS HUB</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">TH</div>
+        <span>TICKETS <span class="purple">HUB</span></span>
+      </a>
+      <button class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+      <div class="nav-links" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="events.html" class="active">Events</a>
+        <a href="login.html">Sign In</a>
+        <a href="cart.html" class="cart-link"><i class="fas fa-shopping-cart"></i> <span class="cart-badge">0</span></a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="page-section">
+    <h1>Upcoming Events</h1>
+    
+    <div class="search-bar">
+      <i class="fas fa-search"></i>
+      <input type="text" id="searchInput" placeholder="Search events, venues, cities..." onkeyup="filterEvents()">
+    </div>
+
+    <div class="events-grid" id="eventsContainer">
+      <div class="event-card" data-title="BTS ARIRANG SPECIAL" data-venue="Seoul Olympic Stadium">
+        <div class="event-img" style="background-image: url('https://images.unsplash.com/photo-1563089145-599997674d42?w=600&h=400&fit=crop')"></div>
+        <div class="event-info">
+          <h3>BTS — ARIRANG SPECIAL</h3>
+          <p><i class="fas fa-calendar"></i> June 15, 2026</p>
+          <p><i class="fas fa-map-marker-alt"></i> Seoul Olympic Stadium, South Korea</p>
+          <span class="badge">VIP</span>
+          <span class="price">₩350,000</span>
+          <button class="btn btn-primary btn-sm" onclick="addToCart('BTS — ARIRANG SPECIAL', 'VIP', 350000, '₩')">Buy Now</button>
+        </div>
+      </div>
+      <div class="event-card" data-title="BTS ARIRANG SPECIAL" data-venue="Seoul Olympic Stadium">
+        <div class="event-img" style="background-image: url('https://images.unsplash.com/photo-1563089145-599997674d42?w=600&h=400&fit=crop')"></div>
+        <div class="event-info">
+          <h3>BTS — ARIRANG SPECIAL</h3>
+          <p><i class="fas fa-calendar"></i> June 15, 2026</p>
+          <p><i class="fas fa-map-marker-alt"></i> Seoul Olympic Stadium, South Korea</p>
+          <span class="badge standard">Standard</span>
+          <span class="price">₩150,000</span>
+          <button class="btn btn-primary btn-sm" onclick="addToCart('BTS — ARIRANG SPECIAL', 'Standard', 150000, '₩')">Buy Now</button>
+        </div>
+      </div>
+      <div class="event-card" data-title="THE WEEKND AFTER HOURS" data-venue="Tokyo Dome">
+        <div class="event-img" style="background-image: url('https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&h=400&fit=crop')"></div>
+        <div class="event-info">
+          <h3>THE WEEKND — AFTER HOURS</h3>
+          <p><i class="fas fa-calendar"></i> July 22, 2026</p>
+          <p><i class="fas fa-map-marker-alt"></i> Tokyo Dome, Japan</p>
+          <span class="badge">VIP</span>
+          <span class="price">¥35,000</span>
+          <button class="btn btn-primary btn-sm" onclick="addToCart('THE WEEKND — AFTER HOURS', 'VIP', 35000, '¥')">Buy Now</button>
+        </div>
+      </div>
+      <div class="event-card" data-title="THE WEEKND AFTER HOURS" data-venue="Tokyo Dome">
+        <div class="event-img" style="background-image: url('https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&h=400&fit=crop')"></div>
+        <div class="event-info">
+          <h3>THE WEEKND — AFTER HOURS</h3>
+          <p><i class="fas fa-calendar"></i> July 22, 2026</p>
+          <p><i class="fas fa-map-marker-alt"></i> Tokyo Dome, Japan</p>
+          <span class="badge standard">Standard</span>
+          <span class="price">¥12,000</span>
+          <button class="btn btn-primary btn-sm" onclick="addToCart('THE WEEKND — AFTER HOURS', 'Standard', 12000, '¥')">Buy Now</button>
+        </div>
+      </div>
+      <div class="event-card" data-title="EXO THE EXOLUXION" data-venue="Rajamangala Stadium">
+        <div class="event-img" style="background-image: url('https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&h=400&fit=crop')"></div>
+        <div class="event-info">
+          <h3>EXO — THE EXO'luXion</h3>
+          <p><i class="fas fa-calendar"></i> August 10, 2026</p>
+          <p><i class="fas fa-map-marker-alt"></i> Rajamangala Stadium, Bangkok</p>
+          <span class="badge">VIP</span>
+          <span class="price">฿8,000</span>
+          <button class="btn btn-primary btn-sm" onclick="addToCart('EXO — THE EXO\'luXion', 'VIP', 8000, '฿')">Buy Now</button>
+        </div>
+      </div>
+      <div class="event-card" data-title="EXO THE EXOLUXION" data-venue="Rajamangala Stadium">
+        <div class="event-img" style="background-image: url('https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&h=400&fit=crop')"></div>
+        <div class="event-info">
+          <h3>EXO — THE EXO'luXion</h3>
+          <p><i class="fas fa-calendar"></i> August 10, 2026</p>
+          <p><i class="fas fa-map-marker-alt"></i> Rajamangala Stadium, Bangkok</p>
+          <span class="badge standard">Standard</span>
+          <span class="price">฿2,500</span>
+          <button class="btn btn-primary btn-sm" onclick="addToCart('EXO — THE EXO\'luXion', 'Standard', 2500, '฿')">Buy Now</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-content">
+      <div class="logo" style="justify-content:center">
+        <div class="logo-icon">TH</div>
+        <span>TICKETS <span class="purple">HUB</span></span>
+      </div>
+      <p>Your trusted marketplace for premium tickets worldwide.</p>
+      <p class="copyright">&copy; 2026 TICKETS HUB. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMenu() { document.getElementById('navLinks').classList.toggle('show'); }
+
+    function filterEvents() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const cards = document.querySelectorAll('.event-card');
+      cards.forEach(card => {
+        const title = card.getAttribute('data-title').toLowerCase();
+        const venue = card.getAttribute('data-venue').toLowerCase();
+        card.style.display = title.includes(input) || venue.includes(input) ? 'block' : 'none';
+      });
+    }
+
+    function addToCart(name, category, price, currency) {
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      cart.push({ name, category, price, currency, qty: 1 });
+      localStorage.setItem('cart', JSON.stringify(cart));
+      document.querySelectorAll('.cart-badge').forEach(b => b.textContent = cart.length);
+      alert('Added to cart!');
+    }
+
+    function updateCartBadge() {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      document.querySelectorAll('.cart-badge').forEach(b => b.textContent = cart.length);
+    }
+    updateCartBadge();
+  </script>
+</body>
+  </html>
