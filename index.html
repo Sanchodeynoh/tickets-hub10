@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TICKETS HUB — Premium Ticket Marketplace</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">TH</div>
+        <span>TICKETS <span class="purple">HUB</span></span>
+      </a>
+      <button class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+      <div class="nav-links" id="navLinks">
+        <a href="index.html" class="active">Home</a>
+        <a href="events.html">Events</a>
+        <a href="login.html">Sign In</a>
+        <a href="cart.html" class="cart-link"><i class="fas fa-shopping-cart"></i> <span class="cart-badge">0</span></a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Your <span class="purple">Premium</span> Ticket Marketplace</h1>
+      <p>Secure your seats for the biggest concerts and events across Asia. BTS, The Weeknd, EXO, and more.</p>
+      <div class="hero-buttons">
+        <a href="events.html" class="btn btn-primary">Browse Events</a>
+        <a href="register.html" class="btn btn-outline">Create Account</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="feature-card">
+      <i class="fas fa-calendar-alt"></i>
+      <h3>Premium Events</h3>
+      <p>Curated selection of the hottest concerts across Asia-Pacific.</p>
+    </div>
+    <div class="feature-card">
+      <i class="fas fa-shield-alt"></i>
+      <h3>Secure Transactions</h3>
+      <p>Verified sellers and protected payments for peace of mind.</p>
+    </div>
+    <div class="feature-card">
+      <i class="fas fa-credit-card"></i>
+      <h3>Easy Checkout</h3>
+      <p>Quick QR payment and fast digital ticket delivery.</p>
+    </div>
+  </section>
+
+  <section class="featured-section">
+    <h2>Featured Events</h2>
+    <div class="events-grid">
+      <div class="event-card" onclick="location.href='events.html'">
+        <div class="event-img" style="background-image: url('https://images.unsplash.com/photo-1563089145-599997674d42?w=600&h=400&fit=crop')"></div>
+        <div class="event-info">
+          <h3>BTS — ARIRANG SPECIAL</h3>
+          <p><i class="fas fa-calendar"></i> June 15, 2026</p>
+          <p><i class="fas fa-map-marker-alt"></i> Seoul Olympic Stadium</p>
+          <span class="price">From ₩150,000</span>
+        </div>
+      </div>
+      <div class="event-card" onclick="location.href='events.html'">
+        <div class="event-img" style="background-image: url('https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&h=400&fit=crop')"></div>
+        <div class="event-info">
+          <h3>THE WEEKND — AFTER HOURS</h3>
+          <p><i class="fas fa-calendar"></i> July 22, 2026</p>
+          <p><i class="fas fa-map-marker-alt"></i> Tokyo Dome</p>
+          <span class="price">From ¥12,000</span>
+        </div>
+      </div>
+      <div class="event-card" onclick="location.href='events.html'">
+        <div class="event-img" style="background-image: url('https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&h=400&fit=crop')"></div>
+        <div class="event-info">
+          <h3>EXO — THE EXO'luXion</h3>
+          <p><i class="fas fa-calendar"></i> August 10, 2026</p>
+          <p><i class="fas fa-map-marker-alt"></i> Rajamangala Stadium, Bangkok</p>
+          <span class="price">From ฿2,500</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-content">
+      <div class="logo" style="justify-content:center">
+        <div class="logo-icon">TH</div>
+        <span>TICKETS <span class="purple">HUB</span></span>
+      </div>
+      <p>Your trusted marketplace for premium tickets worldwide.</p>
+      <p class="copyright">&copy; 2026 TICKETS HUB. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMenu() { document.getElementById('navLinks').classList.toggle('show'); }
+    function updateCartBadge() {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      document.querySelectorAll('.cart-badge').forEach(b => b.textContent = cart.length);
+    }
+    updateCartBadge();
+  </script>
+</body>
+        </html>
