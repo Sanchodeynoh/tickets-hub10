@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — TICKETS HUB</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">TH</div>
+        <span>TICKETS <span class="purple">HUB</span></span>
+      </a>
+      <button class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+      <div class="nav-links" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="events.html">Events</a>
+        <a href="login.html">Sign In</a>
+        <a href="cart.html" class="cart-link"><i class="fas fa-shopping-cart"></i> <span class="cart-badge">0</span></a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="page-section">
+    <h1>Checkout</h1>
+    <div class="checkout-layout">
+      <div class="checkout-form">
+        <h2>Your Details</h2>
+        <form id="checkoutForm">
+          <input type="text" placeholder="Full Name" required>
+          <input type="email" placeholder="Email Address" required>
+          <input type="text" placeholder="Phone Number" required>
+          <input type="text" placeholder="Country" required>
+          <textarea placeholder="Special requests (optional)" rows="3"></textarea>
+          
+          <h2 style="margin-top:20px">Order Summary</h2>
+          <div id="orderSummary"></div>
+
+          <button type="submit" class="btn btn-primary btn-block" style="margin-top:20px">
+            Pay with QR Code
+          </button>
+        </form>
+      </div>
+      <div class="qr-section">
+        <div class="qr-box">
+          <h2>Scan to Pay</h2>
+          <div class="qr-placeholder">
+            <i class="fas fa-qrcode" style="font-size:120px;color:#8B00FF"></i>
+          </div>
+          <p class="text-gray">Scan with any banking app</p>
+          <p class="text-small">After payment, we'll confirm your order within 24 hours and send your tickets via email.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-content">
+      <div class="logo" style="justify-content:center">
+        <div class="logo-icon">TH</div>
+        <span>TICKETS <span class="purple">HUB</span></span>
+      </div>
+      <p>Your trusted marketplace for premium tickets worldwide.</p>
+      <p class="copyright">&copy; 2026 TICKETS HUB. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMenu() { document.getElementById('navLinks').classList.toggle('show'); }
+
+    function loadSummary() {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const summary = document.getElementById('orderSummary');
+      let html = '';
+      let total = 0;
+      cart.forEach(item => {
+        const itemTotal = item.price * item.qty;
+        total += itemTotal;
+        html += `<p>${item.name} (${item.category}) x${item.qty} &mdash; ${item.currency}${itemTotal.toLocaleString()}</p>`;
+      });
+      html += `<p class="price" style="font-size:1.2em;margin-top:10px">Total: ₩${total.toLocaleString()}</p>`;
+      summary.innerHTML = html;
+    }
+
+    document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const order = {
+        id: Date.now(),
+        customer: {
+          name: this[0].value,
+          email: this[1].value,
+          phone: this[2].value,
+          country: this[3].value
+        },
+        items: cart,
+        total: cart.reduce((sum, item) => sum + item.price * item.qty, 0),
+        status: 'pending',
+        date: new Date().toISOString()
+      };
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      orders.push(order);
+      localStorage.setItem('orders', JSON.stringify(orders));
+      localStorage.removeItem('cart');
+      alert('Order placed! Please scan the QR code to pay. We will confirm your order via email within 24 hours.');
+      window.location.href = 'cart.html';
+    });
+
+    loadSummary();
+  </script>
+</body>
+  </html>
