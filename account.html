@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account — TICKETS HUB</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <div class="top-bar">
+    <div class="top-bar-content">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">TH</div>
+        <span>TICKETS <span class="purple">HUB</span></span>
+      </a>
+      <div id="userGreeting" class="user-greeting"></div>
+    </div>
+  </div>
+
+  <section class="page-section" style="padding-top:80px">
+    <h1><i class="fas fa-user purple"></i> My Account</h1>
+    <div id="accountContainer">
+      <div class="auth-box" style="margin:20px auto;text-align:center">
+        <p class="text-gray">Loading...</p>
+      </div>
+    </div>
+  </section>
+
+  <nav class="bottom-nav">
+    <a href="index.html" class="bottom-nav-item">
+      <i class="fas fa-compass"></i>
+      <span>Discover</span>
+    </a>
+    <a href="events.html" class="bottom-nav-item">
+      <i class="fas fa-fire"></i>
+      <span>For You</span>
+    </a>
+    <a href="my-tickets.html" class="bottom-nav-item">
+      <i class="fas fa-ticket-alt"></i>
+      <span>My Tickets</span>
+    </a>
+    <a href="account.html" class="bottom-nav-item active">
+      <i class="fas fa-user"></i>
+      <span>Account</span>
+    </a>
+  </nav>
+
+  <footer style="margin-bottom:70px">
+    <div class="footer-content">
+      <div class="logo" style="justify-content:center">
+        <div class="logo-icon">TH</div>
+        <span>TICKETS <span class="purple">HUB</span></span>
+      </div>
+      <p>Your trusted marketplace for premium tickets worldwide.</p>
+      <p class="copyright">&copy; 2026 TICKETS HUB. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    function checkUser() {
+      const user = JSON.parse(localStorage.getItem('th_user') || 'null');
+      const greeting = document.getElementById('userGreeting');
+      const container = document.getElementById('accountContainer');
+
+      if (user) {
+        greeting.innerHTML = `<span style="color:#C77DFF">Hi, ${user.name}</span>`;
+        
+        let adminLink = '';
+        if (user.isAdmin) {
+          adminLink = `<a href="admin.html" class="btn btn-primary btn-block" style="margin-top:15px">Go to Admin Dashboard</a>`;
+        }
+
+        container.innerHTML = `
+          <div class="auth-box" style="margin:20px auto">
+            <div style="text-align:center">
+              <div style="width:70px;height:70px;background:#8B00FF;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 15px;font-size:28px;color:white;font-weight:bold">${user.name.charAt(0).toUpperCase()}</div>
+              <h2>${user.name}</h2>
+              <p class="text-gray">${user.email}</p>
+              ${user.isAdmin ? '<p style="color:#C77DFF;font-size:13px;margin-top:5px">🔑 Admin Account</p>' : ''}
+            </div>
+            ${adminLink}
+            <button onclick="logout()" class="btn btn-outline btn-block" style="margin-top:10px">Sign Out</button>
+          </div>`;
+      } else {
+        greeting.innerHTML = `<a href="login.html" style="color:#999;text-decoration:none;font-size:14px">Sign In</a>`;
+        container.innerHTML = `
+          <div class="auth-box" style="margin:20px auto;text-align:center">
+            <i class="fas fa-user-circle" style="font-size:60px;color:#555;margin-bottom:15px"></i>
+            <h2>Not Signed In</h2>
+            <p class="text-gray">Sign in to manage your account</p>
+            <a href="login.html" class="btn btn-primary btn-block" style="margin-top:15px">Sign In</a>
+            <a href="register.html" class="btn btn-outline btn-block" style="margin-top:10px">Create Account</a>
+          </div>`;
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('th_user');
+      window.location.href = 'index.html';
+    }
+
+    checkUser();
+  </script>
+</body>
+</html>
