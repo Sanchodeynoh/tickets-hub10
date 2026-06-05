@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TICKETS HUB</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <!-- Top Bar with user greeting -->
+  <div class="top-bar">
+    <div class="top-bar-content">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">TH</div>
+        <span>TICKETS <span class="purple">HUB</span></span>
+      </a>
+      <div id="userGreeting" class="user-greeting"></div>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Your <span class="purple">Premium</span> Ticket Marketplace</h1>
+      <p>Secure your seats for the biggest concerts and events across Asia. BTS, The Weeknd, EXO, and more.</p>
+      <div class="hero-buttons">
+        <a href="events.html" class="btn btn-primary">Browse Events</a>
+        <a href="register.html" class="btn btn-outline">Create Account</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="feature-card">
+      <i class="fas fa-calendar-alt"></i>
+      <h3>Premium Events</h3>
+      <p>Curated selection of the hottest concerts across Asia-Pacific.</p>
+    </div>
+    <div class="feature-card">
+      <i class="fas fa-shield-alt"></i>
+      <h3>Secure Transactions</h3>
+      <p>Verified sellers and protected payments for peace of mind.</p>
+    </div>
+    <div class="feature-card">
+      <i class="fas fa-credit-card"></i>
+      <h3>Easy Checkout</h3>
+      <p>Quick QR payment and fast digital ticket delivery.</p>
+    </div>
+  </section>
+
+  <section class="featured-section">
+    <h2>Featured Events</h2>
+    <div class="events-grid" id="featuredEvents">
+      <p class="text-gray" style="text-align:center;padding:20px;grid-column:1/-1">Loading events...</p>
+    </div>
+  </section>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="bottom-nav-item active">
+      <i class="fas fa-compass"></i>
+      <span>Discover</span>
+    </a>
+    <a href="events.html" class="bottom-nav-item">
+      <i class="fas fa-fire"></i>
+      <span>For You</span>
+    </a>
+    <a href="my-tickets.html" class="bottom-nav-item">
+      <i class="fas fa-ticket-alt"></i>
+      <span>My Tickets</span>
+    </a>
+    <a href="account.html" class="bottom-nav-item">
+      <i class="fas fa-user"></i>
+      <span>Account</span>
+    </a>
+  </nav>
+
+  <footer style="margin-bottom:70px">
+    <div class="footer-content">
+      <div class="logo" style="justify-content:center">
+        <div class="logo-icon">TH</div>
+        <span>TICKETS <span class="purple">HUB</span></span>
+      </div>
+      <p>Your trusted marketplace for premium tickets worldwide.</p>
+      <p class="copyright">&copy; 2026 TICKETS HUB. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    const BACKEND_URL = 'https://tickets-hub10-backend.onrender.com';
+
+    function getCurrency(city) {
+      if (city.includes('Korea')) return '₩';
+      if (city.includes('Japan')) return '¥';
+      if (city.includes('Thailand')) return '฿';
+      return '₩';
+    }
+
+    // Show user greeting if logged in
+    function checkUser() {
+      const user = JSON.parse(localStorage.getItem('th_user') || 'null');
+      const greeting = document.getElementById('userGreeting');
+      if (user) {
+        greeting.innerHTML = `<span style="color:#C77DFF">Hi, ${user.name}</span>`;
+      } else {
+        greeting.innerHTML = `<a href="login.html" style="color:#999;text-decoration:none;font-size:14px">Sign In</a>`;
+      }
+    }
+
+    async function loadFeaturedEvents() {
+      const container = document.getElementById('featuredEvents');
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/events`);
+        const events = await res.json();
+        
+        if (!events || events.length === 0) {
+          container.innerHTML = '<p class="text-gray" style="text-align:center;padding:20px;grid-column:1/-1">No events yet</p>';
+          return;
+        }
+
+        const featured = events.slice(0, 6);
+        container.innerHTML = featured.map(ev => {
+          const currency = getCurrency(ev.city);
+          return `
+            <div class="event-card" onclick="location.href='events.html'">
+              <div class="event-img" style="background-image:url('${ev.image}')"></div>
+              <div class="event-info">
+                <h3>${ev.name}</h3>
+                <p><i class="fas fa-calendar"></i> ${new Date(ev.date + 'T00:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                <p><i class="fas fa-map-marker-alt"></i> ${ev.venue}</p>
+                <span class="price">From ${currency}${(ev.stdPrice || 0).toLocaleString()}</span>
+              </div>
+            </div>`;
+        }).join('');
+      } catch (e) {
+        container.innerHTML = '<p class="text-gray" style="text-align:center;padding:20px;grid-column:1/-1">Could not load events</p>';
+      }
+    }
+
+    checkUser();
+    loadFeaturedEvents();
+  </script>
+</body>
+  </html>
