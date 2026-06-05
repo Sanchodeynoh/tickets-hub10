@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — TICKETS HUB</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .admin-layout { display:flex; min-height:100vh; }
+    .admin-sidebar { width:220px; background:#0D0D1A; border-right:1px solid rgba(139,0,255,0.3); padding:20px 0; position:fixed; top:0; left:0; bottom:0; z-index:100; }
+    .admin-sidebar .logo { padding:0 20px 20px; border-bottom:1px solid rgba(139,0,255,0.2); margin-bottom:15px; }
+    .admin-sidebar a { display:flex; align-items:center; gap:12px; padding:12px 20px; color:#999; text-decoration:none; transition:0.2s; font-size:14px; }
+    .admin-sidebar a:hover, .admin-sidebar a.active { background:rgba(139,0,255,0.1); color:#C77DFF; }
+    .admin-sidebar a i { width:20px; text-align:center; }
+    .admin-content { margin-left:220px; flex:1; padding:30px; min-height:100vh; }
+    .admin-mobile-header { display:none; }
+    @media (max-width:768px) {
+      .admin-sidebar { display:none; }
+      .admin-content { margin-left:0; padding:15px; padding-top:60px; }
+      .admin-mobile-header { display:flex; position:fixed; top:0; left:0; right:0; background:#0D0D1A; padding:15px; border-bottom:1px solid rgba(139,0,255,0.3); z-index:99; align-items:center; justify-content:space-between; }
+      .admin-mobile-menu-btn { background:none; border:none; color:white; font-size:24px; cursor:pointer; }
+      .admin-mobile-menu { display:none; position:fixed; top:60px; left:0; right:0; background:#0D0D1A; border-bottom:2px solid #8B00FF; z-index:98; }
+      .admin-mobile-menu.show { display:block; }
+      .admin-mobile-menu a { display:block; padding:15px 20px; color:#999; text-decoration:none; border-bottom:1px solid rgba(255,255,255,0.05); }
+      .admin-mobile-menu a:hover, .admin-mobile-menu a.active { color:#C77DFF; background:rgba(139,0,255,0.1); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Mobile Header -->
+  <div class="admin-mobile-header">
+    <div class="logo">
+      <div class="logo-icon">TH</div>
+      <span>TICKETS <span class="purple">HUB</span> <span style="font-size:10px;background:#8B00FF;padding:2px 6px;border-radius:4px">ADMIN</span></span>
+    </div>
+    <button class="admin-mobile-menu-btn" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></button>
+  </div>
+  <div class="admin-mobile-menu" id="mobileMenu">
+    <a href="#" onclick="showSection('dashboard');toggleMobileMenu()" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+    <a href="#" onclick="showSection('events');toggleMobileMenu()"><i class="fas fa-calendar"></i> Events</a>
+    <a href="#" onclick="showSection('payment');toggleMobileMenu()"><i class="fas fa-credit-card"></i> Payment</a>
+    <a href="index.html"><i class="fas fa-arrow-left"></i> Back to Site</a>
+  </div>
+
+  <div class="admin-layout">
+    <!-- Sidebar (Desktop) -->
+    <div class="admin-sidebar">
+      <div class="logo" style="justify-content:center">
+        <div class="logo-icon">TH</div>
+        <span>TICKETS <span class="purple">HUB</span></span>
+      </div>
+      <a href="#" onclick="showSection('dashboard')" class="active" id="side-dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      <a href="#" onclick="showSection('events')" id="side-events"><i class="fas fa-calendar"></i> Events</a>
+      <a href="#" onclick="showSection('payment')" id="side-payment"><i class="fas fa-credit-card"></i> Payment</a>
+      <div style="border-top:1px solid rgba(139,0,255,0.2);margin-top:20px;padding-top:15px">
+        <a href="index.html"><i class="fas fa-arrow-left"></i> Back to Site</a>
+        <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="admin-content">
+      <div id="statusBanner" style="background:#1a3a1a;border:1px solid #4CAF50;padding:10px 15px;border-radius:8px;margin-bottom:20px;text-align:center;display:none"></div>
+
+      <!-- Dashboard Section -->
+      <div id="section-dashboard">
+        <h1>Dashboard</h1>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <i class="fas fa-calendar-alt"></i>
+            <p class="stat-label">Active Events</p>
+            <p class="stat-number" id="activeEvents">0</p>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-shopping-bag"></i>
+            <p class="stat-label">Pending Orders</p>
+            <p class="stat-number" id="pendingCount">0</p>
+          </div>
+          <div class="stat-card">
+            <i class="fas fa-check-circle"></i>
+            <p class="stat-label">Completed</p>
+            <p class="stat-number" id="completedCount">0</p>
+          </div>
+        </div>
+
+        <div class="admin-section">
+          <h2>Recent Orders</h2>
+          <div id="ordersContainer"><p class="text-gray">Loading...</p></div>
+        </div>
+      </div>
+
+      <!-- Events Section -->
+      <div id="section-events" style="display:none">
+        <div class="section-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+          <h1>Manage Events</h1>
+          <button class="btn btn-primary" onclick="showModal('eventModal')">+ Add Event</button>
+        </div>
+        <div class="admin-section">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr><th>Event</th><th>Date</th><th>Venue</th><th>Prices</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="eventsTable"><tr><td colspan="5" style="text-align:center;padding:20px;color:#666">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Section -->
+      <div id="section-payment" style="display:none">
+        <h1>Payment Settings</h1>
+        <div class="admin-section">
+          <div class="section-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+            <h2>QR Code & Bank Details</h2>
+            <button class="btn btn-primary" onclick="showModal('settingsModal')">Edit Settings</button>
+          </div>
+          <div id="paymentSettingsDisplay">
+            <p class="text-gray">Loading...</p>
+          </div>
+          <div id="qrPreview" style="text-align:center;padding:20px;margin-top:10px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Event Modal -->
+  <div id="eventModal" class="modal" style="display:none">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('eventModal')">&times;</span>
+      <h2 id="eventModalTitle">Add New Event</h2>
+      <form id="eventForm">
+        <input type="hidden" id="editEventId">
+        <input type="text" id="eventName" placeholder="Event Name" required>
+        <input type="date" id="eventDate" required>
+        <input type="text" id="eventVenue" placeholder="Venue" required>
+        <input type="text" id="eventCity" placeholder="City, Country" required>
+        <input type="number" id="eventVipPrice" placeholder="VIP Price" required>
+        <input type="number" id="eventStdPrice" placeholder="Standard Price" required>
+        <input type="url" id="eventImage" placeholder="Image URL" required>
+        <button type="submit" class="btn btn-primary btn-block" id="eventSubmitBtn">Add Event</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settingsModal" class="modal" style="display:none">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('settingsModal')">&times;</span>
+      <h2>Payment Settings</h2>
+      <form id="settingsForm">
+        <label style="color:#999;font-size:13px;display:block;margin-top:10px">QR Code Image URL</label>
+        <input type="url" id="qrUrl" placeholder="Paste QR code image URL">
+        <label style="color:#999;font-size:13px;display:block;margin-top:10px">Bank Name</label>
+        <input type="text" id="bankName" placeholder="e.g. KB Kookmin Bank">
+        <label style="color:#999;font-size:13px;display:block;margin-top:10px">Account Name</label>
+        <input type="text" id="accountName" placeholder="e.g. Kim Sancho">
+        <label style="color:#999;font-size:13px;display:block;margin-top:10px">Account Number</label>
+        <input type="text" id="accountNumber" placeholder="e.g. 1234-56-789">
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top:20px">Save Settings</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const BACKEND_URL = 'https://tickets-hub10-backend.onrender.com';
+
+    function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('show'); }
+
+    function showSection(name) {
+      // Hide all sections
+      document.querySelectorAll('[id^="section-"]').forEach(s => s.style.display = 'none');
+      // Show selected
+      document.getElementById(`section-${name}`).style.display = 'block';
+      // Update sidebar active state
+      document.querySelectorAll('.admin-sidebar a').forEach(a => a.classList.remove('active'));
+      const side = document.getElementById(`side-${name}`);
+      if (side) side.classList.add('active');
+      // Update mobile menu active
+      document.querySelectorAll('.admin-mobile-menu a').forEach(a => a.classList.remove('active'));
+    }
+
+    function showStatus(msg, type) {
+      const banner = document.getElementById('statusBanner');
+      banner.style.display = 'block';
+      banner.style.background = type === 'error' ? '#2d1b1b' : '#1a3a1a';
+      banner.style.borderColor = type === 'error' ? '#ff4444' : '#4CAF50';
+      banner.style.color = type === 'error' ? '#ff6666' : '#4CAF50';
+      banner.textContent = msg;
+      setTimeout(() => { banner.style.display = 'none'; }, 5000);
+    }
+
+    function showModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    window.onclick = function(e) { if (e.target.classList.contains('modal')) e.target.style.display = 'none'; }
+
+    function logout() { localStorage.removeItem('th_user'); window.location.href = 'index.html'; }
+
+    // ===== EVENTS =====
+    async function loadEvents() {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/events`);
+        const events = await res.json();
+        document.getElementById('activeEvents').textContent = events.length;
+        
+        const tbody = document.getElementById('eventsTable');
+        if (events.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:#666">No events. Click "+ Add Event" to start.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = events.map(ev => `
+          <tr>
+            <td>${ev.name}</td>
+            <td>${ev.date}</td>
+            <td>${ev.venue}</td>
+            <td style="font-size:13px">VIP: ${(ev.vipPrice||0).toLocaleString()}<br>Std: ${(ev.stdPrice||0).toLocaleString()}</td>
+            <td><button class="btn-edit" onclick="editEvent(${ev.id})">Edit</button> <button class="btn-delete" onclick="deleteEvent(${ev.id})">Delete</button></td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        document.getElementById('eventsTable').innerHTML = '<tr><td colspan="5" style="text-align:center;color:#ff4444;padding:20px">Error loading events</td></tr>';
+      }
+    }
+
+    document.getElementById('eventForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const editId = document.getElementById('editEventId').value;
+      const data = {
+        name: document.getElementById('eventName').value,
+        date: document.getElementById('eventDate').value,
+        venue: document.getElementById('eventVenue').value,
+        city: document.getElementById('eventCity').value,
+        vipPrice: parseInt(document.getElementById('eventVipPrice').value),
+        stdPrice: parseInt(document.getElementById('eventStdPrice').value),
+        image: document.getElementById('eventImage').value
+      };
+      try {
+        let res;
+        if (editId) {
+          res = await fetch(`${BACKEND_URL}/api/events/${editId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+        } else {
+          res = await fetch(`${BACKEND_URL}/api/events`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+        }
+        const result = await res.json();
+        if (result.success) {
+          showStatus(editId ? 'Event updated!' : 'Event added!', 'success');
+          this.reset();
+          document.getElementById('editEventId').value = '';
+          document.getElementById('eventSubmitBtn').textContent = 'Add Event';
+          document.getElementById('eventModalTitle').textContent = 'Add New Event';
+          closeModal('eventModal');
+          loadEvents();
+        }
+      } catch (e) { showStatus('Error saving event', 'error'); }
+    });
+
+    async function editEvent(id) {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/events`);
+        const events = await res.json();
+        const ev = events.find(e => e.id == id);
+        if (!ev) return;
+        document.getElementById('editEventId').value = id;
+        document.getElementById('eventName').value = ev.name;
+        document.getElementById('eventDate').value = ev.date;
+        document.getElementById('eventVenue').value = ev.venue;
+        document.getElementById('eventCity').value = ev.city;
+        document.getElementById('eventVipPrice').value = ev.vipPrice;
+        document.getElementById('eventStdPrice').value = ev.stdPrice;
+        document.getElementById('eventImage').value = ev.image;
+        document.getElementById('eventSubmitBtn').textContent = 'Update Event';
+        document.getElementById('eventModalTitle').textContent = 'Edit Event';
+        showModal('eventModal');
+      } catch (e) { showStatus('Error loading event', 'error'); }
+    }
+
+    async function deleteEvent(id) {
+      if (!confirm('Delete this event?')) return;
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/events/${id}`, { method: 'DELETE' });
+        const result = await res.json();
+        if (result.success) { showStatus('Event deleted', 'success'); loadEvents(); }
+      } catch (e) { showStatus('Error deleting event', 'error'); }
+    }
+
+    // ===== SETTINGS =====
+    async function loadSettings() {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/settings`);
+        const s = await res.json();
+        document.getElementById('paymentSettingsDisplay').innerHTML = `
+          <p class="text-gray" style="margin-bottom:5px">💳 <strong>Bank:</strong> ${s.bankName || 'Not set'}</p>
+          <p class="text-gray" style="margin-bottom:5px">👤 <strong>Account:</strong> ${s.accountName || 'Not set'}</p>
+          <p class="text-gray" style="margin-bottom:5px">🔢 <strong>Account No:</strong> ${s.accountNumber || 'Not set'}</p>`;
+        const preview = document.getElementById('qrPreview');
+        if (s.qrCode) {
+          preview.innerHTML = `<img src="${s.qrCode}" alt="QR" style="max-width:150px;border-radius:8px;border:2px solid #8B00FF;padding:5px;background:white">`;
+        } else {
+          preview.innerHTML = '<p class="text-gray">No QR code set.</p>';
+        }
+        document.getElementById('qrUrl').value = s.qrCode || '';
+        document.getElementById('bankName').value = s.bankName || '';
+        document.getElementById('accountName').value = s.accountName || '';
+        document.getElementById('accountNumber').value = s.accountNumber || '';
+      } catch (e) {
+        document.getElementById('paymentSettingsDisplay').innerHTML = '<p class="text-gray">Could not load settings.</p>';
+      }
+    }
+
+    document.getElementById('settingsForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/settings`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+          qrCode: document.getElementById('qrUrl').value,
+          bankName: document.getElementById('bankName').value,
+          accountName: document.getElementById('accountName').value,
+          accountNumber: document.getElementById('accountNumber').value
+        })});
+        const result = await res.json();
+        if (result.success) { showStatus('Settings saved!', 'success'); closeModal('settingsModal'); loadSettings(); }
+      } catch (e) { showStatus('Error saving settings', 'error'); }
+    });
+
+    // ===== ORDERS =====
+    async function loadOrders() {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/orders`);
+        const orders = await res.json();
+        const pending = orders.filter(o => o.status === 'pending');
+        const completed = orders.filter(o => o.status === 'completed');
+        document.getElementById('pendingCount').textContent = pending.length;
+        document.getElementById('completedCount').textContent = completed.length;
+
+        const container = document.getElementById('ordersContainer');
+        if (orders.length === 0) {
+          container.innerHTML = '<p class="text-gray">No orders yet.</p>';
+          return;
+        }
+
+        container.innerHTML = orders.map(order => `
+          <div class="order-card" style="margin-bottom:10px">
+            <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:8px">
+              <div>
+                <p><strong>${order.customer.name}</strong> &mdash; ${order.customer.email}</p>
+                <p class="text-gray" style="font-size:13px">📞 ${order.customer.phone} &middot; 🌍 ${order.customer.country}</p>
+                <p class="text-gray" style="font-size:13px">${order.items.length} item(s) &middot; Total: ₩${(order.total || 0).toLocaleString()}</p>
+                <p class="text-gray" style="font-size:12px">Order #${order.id} &middot; ${new Date(order.date).toLocaleString()}</p>
+              </div>
+              <div style="text-align:right"><span class="badge ${order.status === 'completed' ? 'standard' : ''}">${order.status}</span></div>
+            </div>
+            <div style="margin-top:8px;font-size:13px;color:#ccc">
+              ${(order.items||[]).map(item => `<div>🎫 ${item.name} (${item.category}) x${item.qty||1}</div>`).join('')}
+            </div>
+            ${order.status === 'pending' ? `<div style="margin-top:10px"><button class="btn btn-primary btn-sm" onclick="completeOrder(${order.id})">Mark Complete</button></div>` : ''}
+          </div>
+        `).join('');
+      } catch (e) {
+        document.getElementById('ordersContainer').innerHTML = '<p class="text-gray">Could not load orders.</p>';
+      }
+    }
+
+    async function completeOrder(id) {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/orders/${id}/complete`, { method: 'PUT' });
+        const result = await res.json();
+        if (result.success) { showStatus('Order completed!', 'success'); loadOrders(); }
+      } catch (e) { showStatus('Error updating order', 'error'); }
+    }
+
+    loadEvents();
+    loadSettings();
+    loadOrders();
+  </script>
+</body>
+  </html>
