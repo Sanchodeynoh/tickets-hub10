@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TICKETS HUB</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="top-bar-content">
+      <div style="display:flex;align-items:center;gap:12px">
+        <!-- Hamburger Menu Button (three dashes) -->
+        <button class="hamburger-btn" onclick="toggleHamburger()">
+          <i class="fas fa-bars"></i>
+        </button>
+        <a href="index.html" class="logo">
+          <div class="logo-icon">TH</div>
+          <span>TICKETS <span class="purple">HUB</span></span>
+        </a>
+      </div>
+      <div id="userGreeting" class="user-greeting"></div>
+    </div>
+  </div>
+
+  <!-- Hamburger Menu Overlay -->
+  <div class="menu-overlay" id="menuOverlay" onclick="toggleHamburger()"></div>
+  
+  <!-- Hamburger Menu -->
+  <div class="hamburger-menu" id="hamburgerMenu">
+    <div class="menu-section">Menu</div>
+    <a href="index.html" class="active"><i class="fas fa-home"></i> Home</a>
+    <a href="events.html"><i class="fas fa-fire"></i> For You</a>
+    <a href="my-tickets.html"><i class="fas fa-ticket-alt"></i> My Tickets</a>
+    <a href="cart.html"><i class="fas fa-shopping-cart"></i> Cart</a>
+    <div class="menu-section">Account</div>
+    <a href="account.html"><i class="fas fa-user"></i> My Account</a>
+    <a href="login.html" id="menuLogin"><i class="fas fa-sign-in-alt"></i> Sign In</a>
+    <a href="register.html" id="menuRegister"><i class="fas fa-user-plus"></i> Register</a>
+    <div class="menu-section" id="adminMenuSection" style="display:none">Admin</div>
+    <a href="admin.html" id="menuAdmin" style="display:none"><i class="fas fa-cog"></i> Admin Panel</a>
+    <a href="#" id="menuLogout" style="display:none" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Your <span class="purple">Premium</span> Ticket Marketplace</h1>
+      <p>Secure your seats for the biggest concerts and events across Asia. BTS, The Weeknd, EXO, and more.</p>
+      <div class="hero-buttons">
+        <a href="events.html" class="btn btn-primary">Browse Events</a>
+        <a href="register.html" class="btn btn-outline">Create Account</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="feature-card">
+      <i class="fas fa-calendar-alt"></i>
+      <h3>Premium Events</h3>
+      <p>Curated selection of the hottest concerts across Asia-Pacific.</p>
+    </div>
+    <div class="feature-card">
+      <i class="fas fa-shield-alt"></i>
+      <h3>Secure Transactions</h3>
+      <p>Verified sellers and protected payments.</p>
+    </div>
+    <div class="feature-card">
+      <i class="fas fa-credit-card"></i>
+      <h3>Easy Checkout</h3>
+      <p>Quick QR payment and fast digital ticket delivery.</p>
+    </div>
+  </section>
+
+  <!-- Featured Events -->
+  <section class="featured-section">
+    <h2>Featured Events</h2>
+    <div class="events-grid" id="featuredEvents">
+      <p class="text-gray" style="text-align:center;padding:20px;grid-column:1/-1">Loading events...</p>
+    </div>
+  </section>
+
+  <!-- Bottom Navigation (Ticketmaster Style) -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="bottom-nav-item active">
+      <i class="fas fa-compass"></i>
+      <span>Discover</span>
+    </a>
+    <a href="events.html" class="bottom-nav-item">
+      <i class="fas fa-fire"></i>
+      <span>For You</span>
+    </a>
+    <a href="my-tickets.html" class="bottom-nav-item">
+      <i class="fas fa-ticket-alt"></i>
+      <span>My Tickets</span>
+    </a>
+    <a href="account.html" class="bottom-nav-item">
+      <i class="fas fa-user"></i>
+      <span>My Account</span>
+    </a>
+  </nav>
+
+  <footer>
+    <div class="footer-content">
+      <div class="logo" style="justify-content:center">
+        <div class="logo-icon">TH</div>
+        <span>TICKETS <span class="purple">HUB</span></span>
+      </div>
+      <p>Your trusted marketplace for premium tickets worldwide.</p>
+      <p class="copyright">&copy; 2026 TICKETS HUB. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    const BACKEND_URL = 'https://tickets-hub10-backend.onrender.com';
+
+    function toggleHamburger() {
+      document.getElementById('hamburgerMenu').classList.toggle('show');
+      document.getElementById('menuOverlay').classList.toggle('show');
+    }
+
+    function logout() {
+      localStorage.removeItem('th_user');
+      window.location.href = 'index.html';
+    }
+
+    function getCurrency(city) {
+      if (city.includes('Korea')) return '₩';
+      if (city.includes('Japan')) return '¥';
+      if (city.includes('Thailand')) return '฿';
+      if (city.includes('Malaysia')) return 'RM';
+      if (city.includes('Philippines')) return '₱';
+      return '₩';
+    }
+
+    // Show user greeting and update menu
+    function checkUser() {
+      const user = JSON.parse(localStorage.getItem('th_user') || 'null');
+      const greeting = document.getElementById('userGreeting');
+      const menuLogin = document.getElementById('menuLogin');
+      const menuRegister = document.getElementById('menuRegister');
+      const menuLogout = document.getElementById('menuLogout');
+      const menuAdmin = document.getElementById('menuAdmin');
+      const adminSection = document.getElementById('adminMenuSection');
+
+      if (user) {
+        greeting.innerHTML = `<span style="color:#C77DFF">Hi, ${user.name}</span>`;
+        menuLogin.style.display = 'none';
+        menuRegister.style.display = 'none';
+        menuLogout.style.display = 'flex';
+        
+        if (user.isAdmin) {
+          menuAdmin.style.display = 'flex';
+          adminSection.style.display = 'block';
+        }
+      } else {
+        greeting.innerHTML = `<a href="login.html" style="color:#999;text-decoration:none;font-size:14px">Sign In</a>`;
+        menuLogin.style.display = 'flex';
+        menuRegister.style.display = 'flex';
+        menuLogout.style.display = 'none';
+        menuAdmin.style.display = 'none';
+        adminSection.style.display = 'none';
+      }
+    }
+
+    async function loadFeaturedEvents() {
+      const container = document.getElementById('featuredEvents');
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/events`);
+        const events = await res.json();
+        
+        if (!events || events.length === 0) {
+          container.innerHTML = '<p class="text-gray" style="text-align:center;padding:20px;grid-column:1/-1">No events yet</p>';
+          return;
+        }
+
+        const featured = events.slice(0, 6);
+        container.innerHTML = featured.map(ev => {
+          const currency = getCurrency(ev.city);
+          return `
+            <div class="event-card" onclick="location.href='events.html'">
+              <div class="event-img" style="background-image:url('${ev.image}')"></div>
+              <div class="event-info">
+                <h3>${ev.name}</h3>
+                <p><i class="fas fa-calendar"></i> ${new Date(ev.date + 'T00:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                <p><i class="fas fa-map-marker-alt"></i> ${ev.venue}</p>
+                <span class="price">From ${currency}${(ev.stdPrice || 0).toLocaleString()}</span>
+              </div>
+            </div>`;
+        }).join('');
+      } catch (e) {
+        container.innerHTML = '<p class="text-gray" style="text-align:center;padding:20px;grid-column:1/-1">Could not load events</p>';
+      }
+    }
+
+    checkUser();
+    loadFeaturedEvents();
+  </script>
+</body>
+  </html>
